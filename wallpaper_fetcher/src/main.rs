@@ -95,7 +95,7 @@ fn get_wallpaper_dir() -> PathBuf {
 /// 主逻辑：检查并更新壁纸
 fn check_and_update_wallpaper() -> Result<(), Box<dyn std::error::Error>> {
     // 硬编码的 JSON URL（示例 URL，实际使用时请替换）
-    let config_url = "https://example.com/wallpapers.json";
+    let config_url = "https://class4json.c4.rainmc.top/wallpapers.json";
     
     let client = Client::builder()
         .timeout(Duration::from_secs(30))
