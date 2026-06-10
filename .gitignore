@@ -1,0 +1,21 @@
+```
+# Dependencies
+target/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# Rust-specific
+**/*.rs.bk
+Cargo.lock
+```
