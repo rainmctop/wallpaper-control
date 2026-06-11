@@ -139,7 +139,6 @@ fn set_wallpaper(path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
     use std::os::windows::ffi::OsStrExt;
     use windows::Win32::System::Com::{CoInitializeEx, CoUninitialize, COINIT_APARTMENTTHREADED};
     use windows::Win32::UI::WindowsAndMessaging::{SystemParametersInfoW, SPI_SETDESKWALLPAPER, SPIF_SENDCHANGE, SPIF_UPDATEINIFILE};
-    use windows::core::PCWSTR;
     
     unsafe {
         // Initialize COM
@@ -155,7 +154,7 @@ fn set_wallpaper(path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
         SystemParametersInfoW(
             SPI_SETDESKWALLPAPER,
             0,
-            Some(PCWSTR(wide_path.as_ptr())),
+            Some(wide_path.as_ptr() as *mut core::ffi::c_void),
             SPIF_UPDATEINIFILE | SPIF_SENDCHANGE,
         )?;
         
