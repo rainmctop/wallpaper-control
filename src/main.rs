@@ -21,7 +21,7 @@ struct WallpaperInfo {
 
 fn main() {
     // Hardcoded server URL (JSON endpoint)
-    let server_url = "https://example.com/wallpapers.json";
+    let server_url = "https://json.aeea.qzz.io/wp.json";
     
     // Run in a loop to check periodically
     loop {
