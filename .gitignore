@@ -1,21 +1,45 @@
 ```
-# Dependencies
+# Rust-specific ignores
 target/
+Cargo.lock
+
+# Dependencies
+vendor/
+
+# Compiled and build artifacts
+**/*.rs.bk
+**/*.dSYM/
+**/*.dylib
+**/*.so
+**/*.dll
+**/*.exe
+**/*.o
+**/*.obj
+**/*.a
+**/*.lib
 
 # Logs and temp files
 *.log
 *.tmp
+*.swp
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # Environment
 .env
 .env.local
 *.env.*
 
-# Editors
-.vscode/
-.idea/
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
-# Rust-specific
-**/*.rs.bk
-Cargo.lock
+# OS specific
+.DS_Store
+Thumbs.db
 ```
