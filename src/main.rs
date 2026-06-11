@@ -82,26 +82,26 @@ fn run_once(server_url: &str) -> Result<(), Box<dyn std::error::Error>> {
 fn is_wallpaper_active(wallpaper: &WallpaperInfo, current_date: &str, current_time: &str) -> bool {
     // Check date range
     if let Some(start_date) = &wallpaper.start_date {
-        if current_date < start_date {
+        if current_date < start_date.as_str() {
             return false;
         }
     }
     
     if let Some(end_date) = &wallpaper.end_date {
-        if current_date > end_date {
+        if current_date > end_date.as_str() {
             return false;
         }
     }
     
     // Check time range
     if let Some(start_time) = &wallpaper.start_time {
-        if current_time < start_time {
+        if current_time < start_time.as_str() {
             return false;
         }
     }
     
     if let Some(end_time) = &wallpaper.end_time {
-        if current_time > end_time {
+        if current_time > end_time.as_str() {
             return false;
         }
     }
@@ -137,9 +137,10 @@ fn download_wallpaper(client: &reqwest::blocking::Client, url: &str) -> Result<P
 fn set_wallpaper(path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
     use std::ffi::OsStr;
     use std::os::windows::ffi::OsStrExt;
-    use windows::Win32::System::Com::*;
-    use windows::Win32::UI::Shell::*;
-    use windows::Win32::Foundation::*;
+    use windows::Win32::System::Com::{CoInitializeEx, CoUninitialize, COINIT_APARTMENTTHREADED};
+    use windows::Win32::UI::Shell::{SystemParametersInfoW, SPIF_SENDCHANGE, SPIF_UPDATEINIFILE};
+    use windows::Win32::UI::WindowsAndMessaging::{SPI_SETDESKWALLPAPER};
+    use windows::Win32::Foundation::PCWSTR;
     
     unsafe {
         // Initialize COM
