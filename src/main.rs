@@ -6,11 +6,6 @@ use std::thread;
 use std::time::Duration;
 
 #[derive(Debug, Deserialize)]
-struct WallpaperConfig {
-    wallpapers: Vec<WallpaperInfo>,
-}
-
-#[derive(Debug, Deserialize)]
 struct WallpaperInfo {
     url: String,
     start_date: Option<String>,
@@ -47,7 +42,46 @@ fn run_once(server_url: &str) -> Result<(), Box<dyn std::error::Error>> {
         return Err(format!("Failed to fetch config: {}", response.status()).into());
     }
     
-    let config: WallpaperConfig = response.json()?;
+    let response_text = response.text()?;
+    
+    // 尝试解析为不同的 JSON 结构以兼容多种服务器返回格式
+    let wallpapers: Vec<WallpaperInfo> = if let Ok(list) = serde_json::from_str::<Vec<WallpaperInfo>>(&response_text) {
+        // 情况 1: 直接返回数组 [{...}, {...}]
+        list
+    } else if let Ok(obj) = serde_json::from_str::<serde_json::Value>(&response_text) {
+        // 情况 2 & 3 & 4: 返回的是对象 {...}
+        if obj.is_object() {
+            // 尝试查找常见的键名 (wallpapers, data, list, items, result)
+            let keys = ["wallpapers", "data", "list", "items", "result"];
+            let mut found_list = None;
+            
+            for key in &keys {
+                if let Some(val) = obj.get(*key) {
+                    if val.is_array() {
+                        found_list = Some(val.clone());
+                        break;
+                    }
+                }
+            }
+
+            if let Some(array_val) = found_list {
+                // 情况 2: 找到了嵌套的数组 {"wallpapers": [...]}
+                serde_json::from_value(array_val)?
+            } else {
+                // 情况 4: 对象本身就是单张壁纸配置，将其包装为数组
+                vec![serde_json::from_value(obj)?]
+            }
+        } else {
+            return Err("Invalid JSON format: expected an object or array".into());
+        }
+    } else {
+        return Err("Failed to parse JSON response".into());
+    };
+    
+    if wallpapers.is_empty() {
+        println!("No wallpapers found in configuration.");
+        return Ok(());
+    }
     
     // Get current date and time
     let now: DateTime<Local> = Local::now();
@@ -57,7 +91,7 @@ fn run_once(server_url: &str) -> Result<(), Box<dyn std::error::Error>> {
     // Find the appropriate wallpaper
     let mut selected_wallpaper: Option<&WallpaperInfo> = None;
     
-    for wallpaper in &config.wallpapers {
+    for wallpaper in &wallpapers {
         if is_wallpaper_active(wallpaper, &current_date, &current_time) {
             selected_wallpaper = Some(wallpaper);
             break;
