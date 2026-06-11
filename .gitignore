@@ -1,27 +1,20 @@
 ```
-# Rust-specific ignores
+# Compiled and build artifacts
 target/
-Cargo.lock
+**/*.rs.bk
+**/*.rlib
 
 # Dependencies
 vendor/
 
-# Compiled and build artifacts
-**/*.rs.bk
-**/*.dSYM/
-**/*.dylib
-**/*.so
-**/*.dll
-**/*.exe
-**/*.o
-**/*.obj
-**/*.a
-**/*.lib
-
 # Logs and temp files
 *.log
 *.tmp
-*.swp
+
+# Environment
+.env
+.env.local
+*.env.*
 
 # Editors
 .vscode/
@@ -29,17 +22,11 @@ vendor/
 *.swp
 *.swo
 
-# Environment
-.env
-.env.local
-*.env.*
-
 # Coverage
 coverage/
 htmlcov/
 .coverage
 
-# OS specific
-.DS_Store
-Thumbs.db
+# Rust-specific
+Cargo.lock
 ```
